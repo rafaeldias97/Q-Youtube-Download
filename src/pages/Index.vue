@@ -1,5 +1,6 @@
 <template>
   <q-page class="gutter-sm">
+    <modal-player ref="modalplayer"></modal-player>
     <div class="row gutter-sm text-center items-center">
       <div class="col-1">
           <q-icon name="play_circle_outline" size="2rem" color="white"></q-icon>
@@ -17,30 +18,36 @@
     </div>
     <br>
     <hr>
-    <div v-for="(video, index) in videos" :key="index">
-      <q-card inline class="q-ma-sm">
-        <q-card-media>
-          <img :src="video.thumbnails.high.url">
-
-          <q-card-title slot="overlay">
-            {{ video.title }}
-            <span slot="subtitle">
-              <div class="row text-center">
-                <div class="col">
-                  <q-btn flat round icon="play_arrow"></q-btn>
+    <div v-if="videos.length > 0">
+      <div v-for="(video, index) in videos" :key="index">
+        <q-card inline class="q-ma-sm">
+          <q-card-media>
+            <img :src="video.thumbnails.high.url">
+            <q-card-title slot="overlay">
+              {{ video.title }}
+              <span slot="subtitle">
+                <div class="row text-center">
+                  <div class="col">
+                    <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
+                  </div>
+                  <div class="col">
+                    <q-btn flat round icon="cloud_download"></q-btn>
+                  </div>
+                  <div class="col">
+                    <q-btn flat round icon="tab_unselected"></q-btn>
+                  </div>
                 </div>
-                <div class="col">
-                  <q-btn flat round icon="cloud_download"></q-btn>
-                </div>
-                <div class="col">
-                  <q-btn flat round icon="tab_unselected"></q-btn>
-                </div>
-              </div>
-            </span>
-          </q-card-title>
-        </q-card-media>
-      </q-card>
-      <hr>
+              </span>
+            </q-card-title>
+          </q-card-media>
+        </q-card>
+        <hr>
+      </div>
+    </div>
+    <div v-else>
+      <q-alert color="dark" class="text-center q-pt-xl">
+        Não há videos
+      </q-alert>
     </div>
   </q-page>
 </template>
@@ -49,8 +56,12 @@
 </style>
 
 <script>
+import ModalPlayer from '../components/ModalPlayer.vue'
 export default {
   name: 'PageIndex',
+  components: {
+    ModalPlayer
+  },
   data () {
     return {
       searchValue: '',
@@ -59,12 +70,15 @@ export default {
   },
   methods: {
     pesquisarVideo () {
+      this.$q.loading.show()
       this.$ytsearch(this.searchValue, this.$opts)
         .then((res) => {
           this.videos = res
+          this.$q.loading.hide()
         })
         .catch((err) => {
           console.error(err)
+          this.$q.loading.hide()
         })
     },
     limparCampo () {
