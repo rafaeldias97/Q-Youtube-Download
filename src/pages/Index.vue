@@ -20,7 +20,7 @@
     <hr>
     <div v-if="videos.length > 0">
       <div v-for="(video, index) in videos" :key="index">
-        <q-card inline class="q-ma-sm">
+        <q-card inline class="q-ma-sm bg-negative q-ma-sm">
           <q-card-media>
             <img :src="video.thumbnails.high.url">
             <q-card-title slot="overlay">
@@ -34,7 +34,7 @@
                     <q-btn flat round icon="cloud_download"></q-btn>
                   </div>
                   <div class="col">
-                    <q-btn flat round icon="tab_unselected"></q-btn>
+                    <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
                   </div>
                 </div>
               </span>
@@ -65,7 +65,8 @@ export default {
   data () {
     return {
       searchValue: '',
-      videos: []
+      videos: [],
+      toDownload: []
     }
   },
   methods: {
@@ -84,6 +85,17 @@ export default {
     limparCampo () {
       this.searchValue = ''
       this.videos = []
+    },
+    adicionarLista (link) {
+      let index = this.verificaMarcacaoLista(link)
+      if (index === -1) {
+        this.toDownload.splice(index, 1)
+      } else {
+        this.toDownload.push(link)
+      }
+    },
+    verificaMarcacaoLista (link) {
+      return this.toDownload.indexOf(link)
     }
   }
 }
