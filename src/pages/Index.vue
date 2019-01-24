@@ -98,9 +98,9 @@ export default {
       return this.toDownload.indexOf(link)
     },
     download (URL) {
-      console.log('chamou download')
+      this.$q.loading.show()
       this.$axios({
-        url: `download?URL=${URL}`,
+        url: `downloadmp4?URL=${URL}`,
         method: 'GET',
         responseType: 'blob'
       })
@@ -111,6 +111,17 @@ export default {
           link.setAttribute('download', 'file.mp4')
           document.body.appendChild(link)
           link.click()
+          this.$q.loading.hide()
+        })
+        .catch((err) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            message: 'ocorreu um erro',
+            position: 'top',
+            color: 'negative',
+            icon: 'warning'
+          })
+          console.log('ocorreu um erro', err)
         })
     }
   }
