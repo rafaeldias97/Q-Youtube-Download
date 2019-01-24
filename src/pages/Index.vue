@@ -31,7 +31,7 @@
                     <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
                   </div>
                   <div class="col">
-                    <q-btn flat round icon="cloud_download" @click="download(video.link)"></q-btn>
+                    <q-btn flat round icon="cloud_download" @click="download(video)"></q-btn>
                   </div>
                   <div class="col">
                     <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
@@ -97,10 +97,10 @@ export default {
     verificaMarcacaoLista (link) {
       return this.toDownload.indexOf(link)
     },
-    download (URL) {
+    download (video) {
       this.$q.loading.show()
       this.$axios({
-        url: `downloadmp4?URL=${URL}`,
+        url: `downloadmp4?URL=${video.link}`,
         method: 'GET',
         responseType: 'blob'
       })
@@ -108,7 +108,7 @@ export default {
           const url = window.URL.createObjectURL(new Blob([res.data]))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', 'file.mp4')
+          link.setAttribute('download', `${video.title}.mp4`)
           document.body.appendChild(link)
           link.click()
           this.$q.loading.hide()
