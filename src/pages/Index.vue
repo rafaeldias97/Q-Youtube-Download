@@ -31,7 +31,7 @@
                     <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
                   </div>
                   <div class="col">
-                    <q-btn flat round icon="cloud_download"></q-btn>
+                    <q-btn flat round icon="cloud_download" @click="download(video.link)"></q-btn>
                   </div>
                   <div class="col">
                     <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
@@ -96,6 +96,22 @@ export default {
     },
     verificaMarcacaoLista (link) {
       return this.toDownload.indexOf(link)
+    },
+    download (URL) {
+      console.log('chamou download')
+      this.$axios({
+        url: `download?URL=${URL}`,
+        method: 'GET',
+        responseType: 'blob'
+      })
+        .then((res) => {
+          const url = window.URL.createObjectURL(new Blob([res.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'file.mp4')
+          document.body.appendChild(link)
+          link.click()
+        })
     }
   }
 }
