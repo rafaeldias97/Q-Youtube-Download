@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="bg-grey-10">
     <q-layout-header>
       <q-toolbar
         color="dark"
@@ -10,7 +10,7 @@
         </q-toolbar-title>
       </q-toolbar>
     </q-layout-header>
-    <q-page-container class="bg-grey-10">
+    <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>

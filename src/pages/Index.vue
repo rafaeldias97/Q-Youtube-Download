@@ -100,15 +100,19 @@ export default {
     download (video) {
       this.$q.loading.show()
       this.$axios({
-        url: `downloadmp4?URL=${video.link}`,
+        url: `download-audio?URL=${video.link}`,
         method: 'GET',
-        responseType: 'blob'
+        responseType: 'blob',
+        onDownloadProgress: (progressEvent) => {
+          console.log(progressEvent)
+          console.log('download', Math.floor(progressEvent.loaded * 100 / progressEvent.total))
+        }
       })
         .then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data]))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', `${video.title}.mp4`)
+          link.setAttribute('download', `${video.title}.mp3`)
           document.body.appendChild(link)
           link.click()
           this.$q.loading.hide()
