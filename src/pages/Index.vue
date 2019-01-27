@@ -56,6 +56,7 @@
 </style>
 
 <script>
+import { mapActions } from 'vuex'
 import ModalPlayer from '../components/ModalPlayer.vue'
 export default {
   name: 'PageIndex',
@@ -65,11 +66,13 @@ export default {
   data () {
     return {
       searchValue: '',
+      loading: 0,
       videos: [],
       toDownload: []
     }
   },
   methods: {
+    ...mapActions('video', ['downloadAudio']),
     pesquisarVideo () {
       this.$q.loading.show()
       this.$ytsearch(this.searchValue, this.$opts)
@@ -99,15 +102,7 @@ export default {
     },
     download (video) {
       this.$q.loading.show()
-      this.$axios({
-        url: `download-audio?URL=${video.link}`,
-        method: 'GET',
-        responseType: 'blob',
-        onDownloadProgress: (progressEvent) => {
-          console.log(progressEvent)
-          console.log('download', Math.floor(progressEvent.loaded * 100 / progressEvent.total))
-        }
-      })
+      this.downloadAudio(video)
         .then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data]))
           const link = document.createElement('a')

@@ -13,6 +13,28 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <q-layout-footer>
+      <q-tabs color="dark">
+        <q-route-tab
+          icon="tab_unselected"
+          to="/selected"
+          exact
+          slot="title"
+        />
+        <q-route-tab
+          icon="explore"
+          to="/"
+          exact
+          slot="title"
+        />
+        <q-route-tab
+          icon="cloud_download"
+          to="/download"
+          exact
+          slot="title"
+        />
+      </q-tabs>
+    </q-layout-footer>
   </q-layout>
 </template>
 

@@ -45,6 +45,7 @@ module.exports = function (ctx) {
       components: [
         'QLayout',
         'QLayoutHeader',
+        'QLayoutFooter',
         'QLayoutDrawer',
         'QPageContainer',
         'QPage',
@@ -68,7 +69,11 @@ module.exports = function (ctx) {
         'QVideo',
         'QModal',
         'QModalLayout',
-        'QAlert'
+        'QAlert',
+        'QTabs',
+        'QTab',
+        'QTabPane',
+        'QRouteTab'
       ],
       directives: [
         'Ripple'
