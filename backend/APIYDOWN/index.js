@@ -4,9 +4,10 @@ const ytdl = require('ytdl-core')
 const app = express()
 const url = require('url')
 const https = require('https')
+const port = process.env.PORT || 4000
 app.use(cors())
-app.listen(4000, () => {
-  console.log('Server Works !!! At port 4000')
+app.listen(port, () => {
+  console.log('Server Works !!! At port ' + port)
 })
 app.get('/downloadmp4', (req, res) => {
   try {
@@ -49,16 +50,13 @@ app.get('/download-audio', (req, res, next) => {
     function tryNextFormat () {
       var format = formats.shift()
       if (!format) {
-        // console.log('No format foudn within the limit');
         return
       }
       var parsed = url.parse(format.url)
-      parsed.method = 'HEAD' // We only want headers to get the filesize
+      parsed.method = 'HEAD'
       https.request(parsed, (response) => {
         res.set({
-          // 'Content-Type': 'text/plain',
           'Content-Length': parseInt(response.headers['content-length'])
-          // 'ETag': '12345'
         })
         console.log(parseInt(response.headers['content-length']))
         console.log(res.headers)

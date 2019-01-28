@@ -13,7 +13,6 @@ const downloadAudio = ({ commit }, video) => {
           percent: percent,
           video: video
         })
-        console.log('action', percent)
       }
     })
       .then((res) => {

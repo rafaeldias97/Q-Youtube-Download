@@ -101,7 +101,6 @@ export default {
       return this.toDownload.indexOf(link)
     },
     download (video) {
-      // this.$q.loading.show()
       this.downloadAudio(video)
         .then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data]))
@@ -110,10 +109,8 @@ export default {
           link.setAttribute('download', `${video.title}.mp3`)
           document.body.appendChild(link)
           link.click()
-          // this.$q.loading.hide()
         })
         .catch((err) => {
-          // this.$q.loading.hide()
           this.$q.notify({
             message: 'ocorreu um erro',
             position: 'top',
