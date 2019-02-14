@@ -3,7 +3,7 @@ import Vue from 'vue'
 const downloadAudio = ({ commit }, video) => {
   return new Promise((resolve, reject) => {
     Vue.prototype.$axios({
-      url: `download-audio?URL=${video.link}`,
+      url: `download?URL=${video.link}`,
       method: 'GET',
       responseType: 'blob',
       onDownloadProgress: (progressEvent) => {

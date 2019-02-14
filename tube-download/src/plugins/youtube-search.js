@@ -1,7 +1,7 @@
 // import something here
 import YoutubeSearch from 'youtube-search-promise'
 var opts = {
-  maxResults: 10,
+  maxResults: 50,
   key: 'AIzaSyCO8NIdNM3XHshNW76cQN2sWxiUDND_XrA'
 }
 

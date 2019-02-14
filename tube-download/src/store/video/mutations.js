@@ -12,6 +12,12 @@ const LOADING = (state, payload) => {
     state.videoDownload[res].percent = payload.percent
   }
 }
+
+const VIDEOS_SEARCH = (state, payload) => {
+  state.videos = payload
+}
+
 export default {
-  LOADING
+  LOADING,
+  VIDEOS_SEARCH
 }

@@ -1,5 +1,10 @@
 <template>
   <q-page padding>
+    <div v-if="videoDownload.length === 0">
+      <q-alert color="negative" class="text-center fixed-center" style="width: 100%">
+        Não há videos
+      </q-alert>
+    </div>
     <div v-for="(video, index) in videoDownload" :key="index">
       <q-card inline class="q-ma-sm bg-negative q-ma-sm">
         <q-card-media>

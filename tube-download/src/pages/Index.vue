@@ -1,51 +1,49 @@
 <template>
   <q-page class="gutter-sm">
     <modal-player ref="modalplayer"></modal-player>
-    <div class="row gutter-sm text-center items-center">
-      <div class="col-1">
-          <q-icon name="play_circle_outline" size="2rem" color="white"></q-icon>
-      </div>
-      <div class="col-11">
-          <q-input v-model="searchValue" inverted color="dark" class="q-ma-sm"
+    <div class="row q-ma-sm text-center items-center">
+      <div class="col-8">
+          <q-input v-model="searchValue" inverted color="dark"
             placeholder="Pesquise aqui ..."></q-input>
       </div>
-      <div class="col text-left q-ml-sm">
-        <q-btn @click="limparCampo()" color="purple" label="limpar" icon="clear"></q-btn>
+      <div class="col-2">
+        <q-btn outline round @click="limparCampo()" color="white" icon="clear"></q-btn>
       </div>
-      <div class="col text-right q-mr-sm">
-        <q-btn @click="pesquisarVideo()" color="purple" label="pesquisar" icon-right="search"></q-btn>
+      <div class="col-2">
+        <q-btn round @click="pesquisarVideo()" color="negative" icon="search"></q-btn>
       </div>
     </div>
-    <br>
     <hr>
     <div v-if="videos.length > 0">
       <div v-for="(video, index) in videos" :key="index">
-        <q-card inline class="q-ma-sm bg-negative q-ma-sm">
-          <q-card-media>
-            <img :src="video.thumbnails.high.url">
-            <q-card-title slot="overlay">
-              {{ video.title }}
-              <span slot="subtitle">
-                <div class="row text-center">
-                  <div class="col">
-                    <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
+        <div v-if="verifyVideo(video.link)">
+          <q-card inline class="q-ma-sm bg-negative">
+            <q-card-media>
+              <img :src="video.thumbnails.high.url">
+              <q-card-title slot="overlay">
+                {{ video.title }}
+                <span slot="subtitle">
+                  <div class="row text-center">
+                    <div class="col">
+                      <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
+                    </div>
+                    <div class="col">
+                      <q-btn flat round icon="cloud_download" @click="download(video)"></q-btn>
+                    </div>
+                    <div class="col">
+                      <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
+                    </div>
                   </div>
-                  <div class="col">
-                    <q-btn flat round icon="cloud_download" @click="download(video)"></q-btn>
-                  </div>
-                  <div class="col">
-                    <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
-                  </div>
-                </div>
-              </span>
-            </q-card-title>
-          </q-card-media>
-        </q-card>
-        <hr>
+                </span>
+              </q-card-title>
+            </q-card-media>
+          </q-card>
+          <hr>
+        </div>
       </div>
     </div>
     <div v-else>
-      <q-alert color="dark" class="text-center q-pt-xl">
+      <q-alert color="negative" class="text-center fixed-center" style="width: 100%">
         Não há videos
       </q-alert>
     </div>
@@ -56,7 +54,7 @@
 </style>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import ModalPlayer from '../components/ModalPlayer.vue'
 export default {
   name: 'PageIndex',
@@ -67,17 +65,20 @@ export default {
     return {
       searchValue: '',
       loading: 0,
-      videos: [],
       toDownload: []
     }
   },
+  computed: {
+    ...mapState('video', ['videos'])
+  },
   methods: {
     ...mapActions('video', ['downloadAudio']),
+    ...mapMutations('video', ['VIDEOS_SEARCH']),
     pesquisarVideo () {
       this.$q.loading.show()
       this.$ytsearch(this.searchValue, this.$opts)
         .then((res) => {
-          this.videos = res
+          this.VIDEOS_SEARCH(res)
           this.$q.loading.hide()
         })
         .catch((err) => {
@@ -87,7 +88,6 @@ export default {
     },
     limparCampo () {
       this.searchValue = ''
-      this.videos = []
     },
     adicionarLista (link) {
       let index = this.verificaMarcacaoLista(link)
@@ -96,6 +96,9 @@ export default {
       } else {
         this.toDownload.push(link)
       }
+    },
+    verifyVideo (link) {
+      return !(link.indexOf('channel') !== -1 || link.indexOf('playlist') !== -1)
     },
     verificaMarcacaoLista (link) {
       return this.toDownload.indexOf(link)
