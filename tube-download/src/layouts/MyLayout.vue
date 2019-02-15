@@ -48,6 +48,9 @@ export default {
       leftDrawerOpen: this.$q.platform.is.desktop
     }
   },
+  created () {
+    this.$q.addressbarColor.set('#616161')
+  },
   methods: {
     openURL
   }
