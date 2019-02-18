@@ -1,44 +1,56 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const cors = require('cors')
 const ytdl = require('ytdl-core')
-const app = express()
 const url = require('url')
 const https = require('https')
-const port = process.env.PORT || 4000
+const app = express()
+const PORT = process.env.PORT || 4000
+
 app.use(cors())
-app.listen(port, () => {
-  console.log('Server Works !!! At port ' + port)
-})
+app.use(bodyParser())
+app.use(bodyParser.urlencoded())
+app.use(bodyParser.json())
 
-app.get('/download', (req, res, next) => {
+app.get('/info', (req, res) => {
   var URL = req.query.URL
-  var Format = req.query.Format || 'mp4'
-  var audio = ytdl(URL, { format: Format })// youtube audio downloader
-
   ytdl.getInfo(URL, (err, info) => {
     if (err) throw err
     let format = ytdl.chooseFormat(info.formats, { quality: '134' })
     if (format) {
-      console.log(info)
+      res.json(info.formats)
+    } else {
+      res.json("Formato não encontrado")
     }
   })
+})
 
-  audio.on('info', function (info) {
-    var formats = info.formats.slice()
+app.post('/download', (req, res, next) => {
+  let URL = req.body.URL
+  let Format = req.body.Format
+  let file = ytdl(URL, { format: Format })
+
+  file.on('info', function (info) {
+    let formats = info.formats.slice()
+    formats.unshift(Format)
     function tryNextFormat () {
-      var format = formats.shift()
+      let format = formats.shift()
       if (!format) {
         return
       }
-      var parsed = url.parse(format.url)
+      let parsed = url.parse(format.url)
       parsed.method = 'HEAD'
       https.request(parsed, (response) => {
         res.set({
           'Content-Length': parseInt(response.headers['content-length'])
         })
-        audio.pipe(res)
+        file.pipe(res)
       }).end()
     }
     tryNextFormat()
   })
+})
+
+app.listen(PORT, () => {
+  console.log(`Server rodando na porta ${PORT}`)
 })
