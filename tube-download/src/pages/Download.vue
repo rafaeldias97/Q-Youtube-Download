@@ -8,7 +8,12 @@
     <div v-for="(video, index) in videoDownload" :key="index">
       <q-card inline class="q-ma-sm bg-negative q-ma-sm">
         <q-card-media>
-          <img :src="video.video.thumbnails.high.url">
+          <div v-if="video.video.thumbnails">
+            <img :src="video.video.thumbnails.high.url">
+          </div>
+          <div v-else>
+            <img :src="'https://research.fb.com/wp-content/uploads/2018/05/music-hero2.jpg'" width="100%">
+          </div>
           <q-card-title slot="overlay">
             {{ video.video.title }}
             <div class="row items-center" v-if="video.percent !== 100">

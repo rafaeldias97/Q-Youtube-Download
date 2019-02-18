@@ -1,10 +1,15 @@
 import Vue from 'vue'
 
-const downloadAudio = ({ commit }, video) => {
+const downloadFile = ({ commit }, video) => {
+  console.log(video)
   return new Promise((resolve, reject) => {
     Vue.prototype.$axios({
-      url: `download?URL=${video.link}`,
-      method: 'GET',
+      url: `download`,
+      data: {
+        URL: video.link,
+        Format: video.Format
+      },
+      method: 'POST',
       responseType: 'blob',
       onDownloadProgress: (progressEvent) => {
         let percent = Math.floor(progressEvent.loaded * 100 / progressEvent.total)
@@ -25,6 +30,19 @@ const downloadAudio = ({ commit }, video) => {
   })
 }
 
+const showFormats = ({ commit }, video) => {
+  return new Promise((resolve, reject) => {
+    Vue.prototype.$axios.get(`info?URL=${video}`)
+      .then((res) => {
+        resolve(res)
+      })
+      .catch((err) => {
+        reject(err)
+      })
+  })
+}
+
 export default {
-  downloadAudio
+  downloadFile,
+  showFormats
 }

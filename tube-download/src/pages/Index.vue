@@ -1,6 +1,7 @@
 <template>
   <q-page class="gutter-sm">
     <modal-player ref="modalplayer"></modal-player>
+    <modal-format ref="modalformat"></modal-format>
     <div class="row q-ma-sm text-center items-center">
       <div class="col-8">
           <q-input v-model="searchValue" inverted color="dark"
@@ -28,7 +29,7 @@
                       <q-btn flat round icon="play_arrow" @click="$refs.modalplayer.play(video)"></q-btn>
                     </div>
                     <div class="col">
-                      <q-btn flat round icon="cloud_download" @click="download(video)"></q-btn>
+                      <q-btn flat round icon="cloud_download" @click="$refs.modalformat.open(video)"></q-btn>
                     </div>
                     <div class="col">
                       <q-btn flat round icon="tab_unselected" @click="adicionarLista(video.link)"></q-btn>
@@ -54,12 +55,14 @@
 </style>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import ModalPlayer from '../components/ModalPlayer.vue'
+import ModalFormat from '../components/ModalFormat.vue'
 export default {
   name: 'PageIndex',
   components: {
-    ModalPlayer
+    ModalPlayer,
+    ModalFormat
   },
   data () {
     return {
@@ -72,7 +75,6 @@ export default {
     ...mapState('video', ['videos'])
   },
   methods: {
-    ...mapActions('video', ['downloadAudio']),
     ...mapMutations('video', ['VIDEOS_SEARCH']),
     pesquisarVideo () {
       this.$q.loading.show()
@@ -102,26 +104,6 @@ export default {
     },
     verificaMarcacaoLista (link) {
       return this.toDownload.indexOf(link)
-    },
-    download (video) {
-      this.downloadAudio(video)
-        .then((res) => {
-          const url = window.URL.createObjectURL(new Blob([res.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', `${video.title}.mp3`)
-          document.body.appendChild(link)
-          link.click()
-        })
-        .catch((err) => {
-          this.$q.notify({
-            message: 'ocorreu um erro',
-            position: 'top',
-            color: 'negative',
-            icon: 'warning'
-          })
-          console.log('ocorreu um erro', err)
-        })
     }
   }
 }
